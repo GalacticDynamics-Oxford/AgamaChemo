@@ -1,0 +1,133 @@
+\input pmacro \reportformat
+\centerline{\titlefont Compiling AGAMA with MS Visual Studio}
+
+\bigskip\noindent
+Here I explain how to get Vasiliev's  AGAMA package (Action-based  Galaxy
+Modelling Framework) running with Microsoft's freely-distributed `Visual Studio'
+compiler. This is unfortunately essential if you want to run AGAMA under
+Windows because it seems impossible to compile either Python or the Gnu
+Scientific Library with the Gnu compilers, and a single compiler must compile all
+components of a code.
+
+Instructions for installing GSL can be found at
+
+\noindent https://solarianprogrammer.com/2020/01/26/getting-started-gsl-gnu-scientific-library-windows-macos-linux/
+
+In a Linux/Gnu environment, AGAMA is embodied in shared library {\tt agama.so}. Under
+VS it is contained in two files {\tt agama.lib} and {\tt agama.dll}. The former is
+what the linker uses, while the latter is required at runtime, so has to lie
+on your {\tt path}. I have the following file {\tt vscl.bat} on my {\tt path}
+so I can compile and link a program {\tt testit.cpp} that uses AGAMA by
+typing {\tt vscl testit}
+\begintt
+@echo off
+cl.exe /c /openmp /I\u\c\agama\agama -EHsc %1.cpp
+@if not %ERRORLEVEL% == 0 (goto end)
+link %1.obj agama.lib /LIBPATH:\u\c\agama\agama\x64\release /NOIMPLIB
+del %1.obj
+del %1.exp
+:end
+\endtt
+What follows {\tt /I} in the second line is the path to
+my AGAMA source code \& what follows {\tt LIBPATH:} in the fourth line is the path to {\tt
+agama.lib}. That's where the VS IDE put it: I used the VS IDE to compile AGAMA
+rather than hacking the file {\tt makefile.local} distributed with AGAMA and using {\tt
+make}. The IDE handles access to the Gnu Scientific Library and Python if the latter were
+installed using the {\tt vcpkg} utility.
+The last {\tt del} command is necessary because VS insists on producing an
+`export' library file {\tt.exp} even when told to
+make an executable. 
+
+\bigskip\centerline{\bf Installing AGAMA}
+
+\noindent  Untar everything into your source directory and start the Visual Studio IDE and open {\tt agama.sln} (sln stands for `solution') within the
+source directory. Then provided you've installed the Gnu Scientific Library within VS, you
+should be able to `build agama' from within the `build' tab of the VS IDL. VS is a bossy
+compiler so there will be zillions of warnings. It will even declare an error on correct
+code, such one using {\tt fopen} rather than {\tt fopen\_s}.  It's easier to identify any
+errors if you use the drop-down menu at the top centre of the error list to change to
+`Build only'. 
+
+You may need to set some compiler options. At the bottom of the Project tab, click on
+Properties. Then click on C/C++ and by clicking on open MP support get Yes (/openmp)
+
+After building AGAMA with Visual Studio Community 2019, Version 16.9.2 
+I tested the procedure for installing AGAMA by transferring the code to an older machine
+running Version 16.4.2. I encountered two problems: (i) min was said not to be a member of
+sdt -- I fixed the problem by adding {\tt \#include <algorithm>} to {\tt math\_base.h}; (ii)
+the linker complained about twoPhase template instantiation. This problem was fixed by
+clicking
+Project$\rightarrow$Properties$\rightarrow$C/C++$\rightarrow$Command line and typing in {\tt /Zc:twoPhase-} at the bottom.
+This click sequence could also be used to establish what the compiler and linker flags
+should be if you prefer to hack {\tt makefile.local} rather than using the IDE.
+ 
+
+Among the many outputs of an error-free compilation  will be {\tt agama.dll}, which you need to copy to a folder
+that lies on your path, and {\tt agama.lib}. The outputs will be in {\tt x64$\backslash$release}
+or {\tt x64$\backslash$debug} if you've set VS to debugging (top left centre of IDE). Here I'm assuming that you
+have a 64-bit machine and that you will be running the code from the `x64 Native Tools
+Command Prompt' that should be in your Visual Studio folder on your start menu. If you
+have a 32-bit machine, change the IDE from `x64' to `x86' at the top. 
+
+The following lines in a makefile
+\begintt
+ASRC = \u\c\agama\agama
+ALIB  = \u\c\agama\agama\x64\release\agama.lib
+ADLL  = \u\c\agama\agama\x64\release\agama.dll
+testit.exe: testit.cpp  $(ALIB) $(ADLL) other.obj
+	cl /openmp /I$(ASRC) -EHsc testit.cpp /link /out:testit.exe NOIMPLIB \ 
+	other.obj \libs\press.lib $(ALIB)
+\endtt
+will update testit.exe when any of {\tt testit.cpp}, {\tt other.obj} or AGAMA is changed. {\tt testit} will
+be linked to AGAMA, other.obj and the static library
+{\tt$\backslash$libs$\backslash$press.lib}. The words before {\tt/link} are instructions
+to the compiler, while those after are instructions to the linker.
+
+For some reason VS doesn't put any symbols from the dll it is constructing into the
+{\tt.lib} file unless explicitly instructed to do so. So any symbol you want to reference
+from code that's not in the AGAMA library has to have its name decorated by {\tt
+\_\_declspec(dllexport)}. I've done this for most routines in the AGAMA library by adding
+
+{\tt\#define EXP \_\_declspec(dllexport)} 
+
+\noindent in header files and then placing {\tt EXP} at
+appropriate places. In the case of a class, one writes
+
+{\tt class EXP some\_class$\{$..}
+
+\noindent which will cause VS to put into the {\tt.lib} file objects and methods defined
+in the class definition. When a method's code is given outside the class definition, its name needs
+another {\tt EXP}:
+
+{\tt EXP double some\_class::some\_method(int i,..)$\{$..}
+
+\noindent even though the method was of course declared when the class was defined.
+Failure to decorate the name when the code is given generates a `redefinition with
+different linkage' error. If the compiler can figure out the need for decoration, why the
+hell can't it add it without bothering me?
+
+\noindent The syntax for a {\tt struct} mirrors that of a {\tt class}
+
+{\tt struct EXP some\_struct$\{$..}
+
+\noindent Functions unconnected with a class are handled like methods define outside a
+class
+
+{\tt EXP double do\_something(double x,double y)$\{$..}
+
+\noindent The older of my versions of Visual Studio complained when the names of symbols in internal
+namespaces were decorated. Since these symbols should only be referenced from within the
+library, this should not be a problem. Anyway don't add {\tt EXP} within internal
+namespaces.
+
+If you reference a symbol in the library that's not had its name thus decorated,
+it will be missing from the {\tt.lib} file and the linker will report `unresolved symbols'. 
+I haven't put {\tt EXP}s in the {\tt raga} files or {\tt py\_wrapper} because I haven't
+used these bits of code. I have run all the {\tt test\_xx} programs in the distributed {\tt
+tests} folder and checked that the results are comparable to those obtained (on a
+different machine) with Gnu.
+
+\bsk
+\line{James Binney\hfil May 2021}
+
+\bye 

@@ -1,0 +1,356 @@
+\input pmacro \reportformat
+\def\nwsec{\medskip\noindent}
+
+\centerline{\titlefont Connecting to observations with AGAMA}
+
+\bigskip\noindent After including {\tt obs.h} one can use several classes
+that are useful in connection with observational data. The code resides in
+six files: {\tt obs\_base.h}, {\tt obs\_dust.h}, {\tt obs\_los.h} and the
+corresponding {\tt .cpp} files. All objects reside in the {\tt obs}
+namespace, so in code they should carry the prefix {\tt obs::}.
+
+\centerline{\it Sky coordinates}
+
+\nwsec
+{\tt PosSky} encodes (ra,dec) and ($\ell,b$) sky coordinates.
+Possibilities 
+are
+{\tt PosSky p(40,30)} and {\tt PosSky p(40,30,true)} -- the first
+makes {\tt p} the point with $\ell=40, b=30$ while the second makes {\tt p}
+the point with ($\alpha=40,\delta=30$) (degrees). The first component of {\tt
+p} is {\tt p.l} regardless of whether this actually refers to $\ell$ or
+$\alpha$, and similarly for the number {\tt p.b}.
+
+\nwsec 
+{\tt VelSky} encodes a proper motion, so {\tt VelSky v(2,3)} sets the
+proper motion  $\tt
+v$ to $(\dot\ell\cos b=2,\dot b=3)$ (mas/yr), while {\tt VelSky
+v(2,3,true)} gives $(\dot\alpha\cos\delta=2,\dot\delta=3)$. The
+components are called {\tt pv.mul} and {\tt pm.mub} regardless of whether
+they are really $(\mu\_\alpha,\mu\_\delta)$ or not.
+
+\nwsec
+{\tt PosVelSky} encodes full astrometry -- {\tt PosVelSky pv(30,40,2,3)}
+makes {\tt pv} into a struct that has components {\tt pv.pos}, which is a
+{\tt PosSky} and thus a component {\tt pv.pos.b}, etc,  and {\tt
+pv.pm}, which is a {\tt VelSky} so has a component {\tt pv.pm.mul}. To store
+astrometry in the equatorial we write  {\tt PosVelSky
+pv(30,40,2,3,true)} -- then {\tt pv.pos.b} will be $\delta=40$, etc. With {\tt
+p} a {\tt SkyPos}  and {\tt v} a {\tt VelSky}, {\tt PosVelSky pv(p,v)}
+will store in {\tt pv} the astrometry in whichever coordinate system was used
+for {\tt p} and {\tt v}.
+
+\nwsec
+We have a series of translation functions
+
+\nwsec
+{\tt PosSky p(from\_RAdec(double ra,double dec))}\quad
+{\tt PosSky p(from\_RAdec(PosSky peq))} yield $(\ell,b)$ positions.
+
+\nwsec
+{\tt PosSky peq(to\_RAdec(double l,double b))}\quad {\tt PosSky
+peq(to\_RAdec(p))} yield $(\alpha,\delta)$ positions.
+
+\nwsec
+{\tt PosVelSky pv(from\_RAdec(ra,dec,mura,
+mudec))} with {\tt ra,dec,mura,mudec} doubles and
+{\tt PosVelSky pv(from\_RAdec(pveq))} with {\tt pveq} $(\alpha,\delta)$
+astrometry  yield astrometry in Galactic coords. 
+
+\nwsec 
+Conversely {\tt PosVelSky pveq(to\_RAdec(l,b,mul,mub))} and 
+{\tt PosVelSky pveq(to\_RAdec(pv))} with {\tt pv} $(\ell,b)$ astrometry 
+yield astrometry in equatorial coords. 
+
+\bigskip
+\centerline{\it Heliocentric coordinates}
+
+\nwsec
+If {\tt intUnits} is an instance of {\tt units::InternalUnits} then {\tt
+solarShifter sun(intUnits)} creates an object that encodes the position
+and velocity
+of the Sun. Invoked thus the Sun's position is $(x,y,z)=(-8.27,0,0.025)\kpc$
+and its
+Galactocentric velocity is $(v_x,v_y,v_z)=(12,249,7)\kms$ but these can be
+changed to anything by creating a {\tt coord::PosVelCar xv} that gives the Cartesian
+coordinates of the Sun wrt the Galactic centre and then writing {\tt
+solarShifter sun(intUnits,\&xv)}. Observations of the LMC
+could be handled by making {\tt xv} the position and velocity of the Sun wrt
+the centre of the LMC.
+
+\nwsec
+{\tt coord::PosCar X(sun.xyz())} stores in {\tt X} the Cartesian position of the
+Sun (internal units). {\tt coord::VelCar V(sun.Vxyz())} stores in {\tt V} the
+Cartesian velocity of the Sun (internal units). 
+
+\nwsec
+A {\tt solarShifter} provides several
+methods for moving between helio- and galacto-centric systems:
+
+\nwsec
+If {\tt PosSky p} is in Galactic coordinates and {\tt double sKpc} is a
+distance in kpc,
+then {\tt coord::PosCar xyz(sun.toCar(p,sKpc))} stores in {\tt xyz}  the Galactocentric
+Cartesian coordinates asociated with {\tt p,sKpc}. 
+
+\nwsec
+Similarly if {\tt v,Vlos} are a proper motion in Galactic coords and a
+line-of-sight velocity in km/s, we can write {\tt
+coord::PosVelCar xv(sun.toCar(p,sKpc,v,Vlos))}. We can also write
+{\tt
+coord::PosVelCyl Rv(sun.toCyl(p,sKpc,v,Vlos))} to get the corresponding cylindrical
+coordinates. 
+
+\nwsec
+Given a 3d point {\tt p} in either cylindrical or Cartesian coords, the
+inverse\hfil\penalty-10000 {\tt PosSky lb(sun.toSky(p,Skpc))} returns sky position {\tt lb}
+(degrees) and distance {\tt sKpc} (kpc). Similarly, given 6d coordinates {\tt
+pv} (in either cylindrical or Cartesian coords) {\tt PosVelSky
+lbpm(sun.toSky(pv,sKpc,Vlos))} returns $(\ell,b)$ astrometry, distance and
+line-of-sight velocity (kpc, km/s).  If {\tt pv} gives 6d coords in either
+cylindrical or Cartesian coords, we can extract just the proper motion and
+line-of-sight velocity: {\tt VelSky v(sun.toPM(pv,Vlos)))}.
+
+\nwsec
+If {\tt p} is a 3d position in either Cylindrical or Cartesian coords, {\tt
+double s=sun.sKpc(p)} stores in {\tt s} the distance to {\tt p} (kpc).
+
+\bigskip
+\centerline{\it Dust}
+
+\nwsec
+A {\tt BaseDustModel} stores a rule for returning the
+dust density at any location, which probably suffices for observations of external galaxies.  {\tt BaseDustModel
+dsty(5,0.1,norm,12,2,fromKpc)} will create an exponential dust layer with scale
+length $R_\d=5\kpc$, scale-height $z_0=0.1\kpc$ that has an integral sign
+($m=1$) warped starting at $R_w=12\kpc$ that reaches to $\pm h_w=2\kpc$. The
+dust density can be scaled up or down by adjusting the {\tt double 
+norm}, while {\tt fromKpc = intUnits.from\_Kpc} is the linear scaling.
+
+\nwsec
+If {\tt potential::PtrDensity gasDens} specifies a gas density, then
+\hfil\penalty-10000  {\tt
+BaseDustModel dst(gasDens,norm,fromKpc)} makes the dust density {\tt norm} times
+the gas density.
+
+\nwsec
+If {\tt p} is a 3d position in cylindrical coordinates, {\tt double rho =
+dsty.dens(p)} store in {\tt rho}  the dust density at {\tt p}. 
+
+\nwsec
+From  {\tt BaseDustModel} we derive a more complex class {\tt DustModel} for observations of
+our Galaxy. The creators of this class have a {\tt solarShifter} as an
+argument and in addition to one of the  global dust patterns inherited from
+by {\tt BaseDustModel} one can add any number of blobs, spirals or clouds.
+
+\nwsec
+{\tt DustModel dsty(Rd,z0,dAvds,Rw,Hw,\&sun)} or
+{\tt DustModel dsty(gasDens,dAvds,\&sun)} or
+make {\tt dsty} 
+a {\tt DustModel} that's just the corresponding {\tt BaseDustModel} with a
+specified location of the Sun and the dust density normalised to {\tt dAvds}
+$A_V$ mag per kpc at the Sun.
+
+\nwsec
+{\tt dsty.dens(p)} with {\tt p} a {\tt PosCyl} returns the dust density at {\tt
+p}.
+
+\nwsec
+{\tt dsty.addBlob(p,Ampl,rad)} adds a Gaussian blob of density centred on {\tt
+p}, {\tt Ampl} and {\tt rad} being the amplitude and scale radius of the
+blob:
+$$
+\rho(R,z,\phi)=A\exp\Big[\{(R-p_R)^2+y^2+(z-p_z)^2\}/2{\rm rad}^2\Big]
+$$
+where $y\equiv p_R(\phi-p_\phi)$.
+
+\nwsec
+{\tt deleteBlob(n)} deletes the $n$th blob -- {\tt deleteBlob()} deletes the
+blob added last.
+
+\nwsec
+{\tt addSpiral(Ampl,phase,alpha,Narms,kz)} adds a global {\tt Narms}
+log-spiral  
+$$
+\rho(R,z,\phi)=A\cos\big[\alpha\ln(R)-N_{\rm arms}(\phi-\phi_0)\big]\e^{-k_z|z|}
+$$
+
+\nwsec
+{\tt deleteSpiral(n)} deletes the $n$th spiral -- {\tt deleteSpiral()}
+deleting the last spiral.
+
+\nwsec {\tt addCloud(Rc,phic,z0,norm,fname)} adds a cloud centred on
+{\tt(Rc,phic)} with (exponential) scale height {\tt z0} and peak density {\tt
+norm}. The surface density of the cloud is read from the file {\tt fname} and
+stored in a linear interpolator. The first line of the file should contain
+{\tt nx,ny,Q,Xmax,Ymax,amax}, the grid size in the radial and azimuthal
+directions, Toomre's $Q$, the $x,y$ extents covered by the grid and the peak
+density. The following numbers should be the density at grid points, the
+outer loop being over $y$. A suitable input file is computed by the method of
+Lulian \& Toomre (1966) -- see Binney (2020). 
+
+\nwsec
+{\tt deleteCloud(n)} deletes the $n$th cloud, etc.
+
+
+\bigskip\centerline{\it Lines of sight}
+
+\nwsec
+The classes for los in our Galaxy and los to distant galaxies are derived
+from the class {\tt BaseLos}. A {\tt BaseLos} provides methods to convert
+$(\ell,b)$ astrometry and a distance to a location {\tt p}, and conversely.
+Similarly, it provides methods to convert a phase-space location into a
+distance and line-of-sight velocity. Finally, if a dust model is specified it
+can give the extinction in the $V,B,R,H,K$ bands at distance $s$.
+
+With {\tt Los} an instance of any line of sight, the relevant methods are
+
+
+\nwsec
+{\tt Los.xyz(s)} returns the {\tt PosCar} at distance {\tt s} (intUnits)
+
+\nwsec
+{\tt Los.Rzphi(s)} returns the {\tt PosCyl} at distance {\tt s} (intUnits)
+
+\nwsec
+{\tt Los.s(p)} returns the distance (intUnits) to {\tt p} ({\tt PosCar} {\tt PosCyl})
+
+\nwsec
+{\tt Los.sKpc(p)} returns the distance (kpc) to {\tt p} ({\tt PosCar} {\tt PosCyl})
+
+\nwsec
+{\tt Los.sVlos(xv)} returns a {\tt std::pair<double,double>} comprising the
+distance and $V_{\rm los}$ (both in intUnits) of the phase-space point {\tt xv} ({\tt PosVelCar} or
+{\tt PosVelCyl}) 
+
+\nwsec
+{\tt Los.A\_V(sKpc)} returns the $V$ band extinction to {\tt sKpc} -- {\tt
+Los.A\_H(sKc)} gives the H-band extinction, etc.
+
+\nwsec
+{\tt extLos} is a class of los through distant external galaxies. Since this
+class is derived from {\tt BaseLos}, instances
+of {\tt extLos} inherit the methods of {\tt BaseLos}. Distances are measured
+from the point on the los that's closest to the galaxy's centre, so they are
+often negative.
+
+\nwsec
+{\tt extLos Los(xs,ys,incl,D,from\_Kpc)} makes Los the line of sight that is
+{\tt xs} (kpc) parallel to the the apparent major axis, {\tt ys} (kpc)
+parallel to the apparent minor axis of a galaxy that has inclination {\tt
+incl} (degrees) and is {\tt D} Mpc from us. Created thus, there is no dust so all extinctions $A_V$ etc
+vanish.
+
+\nwsec
+{\tt extLos Los(xs,ys,incl,D,from\_Kpc,\&dsty)} where {\tt dsty} is a {\tt
+BaseDustModel} makes Los a los along which there is extinction. This creation
+call causes $A_V(s)$ to be tabulated and fitted to a cubic spline.
+
+\nwsec
+{\tt SunLos} is a class for lines of sight from the Sun, normally through our
+Galaxy, but it could be used for lines of sight to nearby galaxies such as
+the LMC or M31.
+
+\nwsec
+{\tt SunLos Los(ps,Sun)} with {\tt pos} a sky position and {\tt Sun} a {\tt
+solarShifter} makes {\tt Los} a dustless los at {\it pos}.
+
+\nwsec
+{\tt SunLos Los(ps,Sun,\&dsty)} with {\tt dsty} a {\tt dustModel} makes {\tt
+Los} the corresponding dusty los.
+
+\bigskip
+\centerline{\it Distribution functions}
+
+\nwsec
+A new keyword {\tt PopFile} for {\tt .ini} files makes it possible to
+specify the photometric properties of the stellar population described by a
+distribution function (DF). If the file name given after  {\tt PopFile} is
+valid, AGAMA seeks to read from the file the fraction of stars in some band
+that are brighter than a series of magnitudes (in ever-fainter order) (xx add
+colours). When a DF is created ({\tt DF\_factory.cpp}), the data are read and
+stored in a cubic-spline interpolator.
+
+\bigskip
+\centerline{\it Interfacing with Observables} 
+
+\nwsec
+The following functions use either a los or the ability to specify magnitudes
+to interface with observations. These functions are specified in {\tt
+galaxymodel\_base.h} so in code their names should carry the prefix {\tt
+galaxymodel::}
+
+\nwsec
+{\tt computeMomentsLOS(model,\&Los,rho,mom1,mom2)} with {\tt model} a {\tt
+GalaxyModel},
+{\tt Los} any los, {\tt rho} and {\tt mom1} arrays of doubles and {\tt mom2}
+an array of {\tt 
+coord::Vel2Cyl} will compute $\av{\rho}(s)$, $\av{\vv}(s)$ and
+$\av{v_iv_j}(s)$ along {\tt Los}. If {\tt Los} is a {\tt SunLos}, $\av{\rho}$
+includes an $s^2$ factor, so it has units of mass per sterad per unit
+distance. If {\tt Los} is an {\tt extLos} there is no $s^2$ factor and the
+units are mass per unit volume. The inclusion or not of the $s^2$ factor
+affects the amount by which fore- and background stars contribute to the
+velocity moments but not their units.
+
+\nwsec
+{\tt computeMomentsLOS} has several optional
+parameters: the first three are uncertainties on the three moments, the next,
+{\tt bool separate}, specifies whether the contributions from the components
+of {\tt model} (bulge, stellar halo, thin disc, etc) should be reported
+separately. The next two specify the required relative error and the maximum
+number of DF evaluations, and the final two, {\tt bright} and {\tt faint},
+limit the stars to be considered to a range of {\it apparent} magnitudes.
+Apparent magnitudes are connected to absolute magnitudes using the distance
+and extinction provided by {\tt Los}. For example
+
+\vskip-8pt
+\nwsec
+{\tt computeMomentsLOS(model, los, \&dens[0], \&Vphi[0],
+			       \&sigmas[0], NULL, NULL, NULL, true, 1e-3,
+1e5, 8, 15);}
+ with {\tt std::vector<double> dens(nc),Vphi(nc)} and\hfil\penalty-10000 {\tt
+std::vector<coord::Vel2Cyl> sigmas(nc)} will compute moments, separated into
+the {\tt nc} components, accurate to 0.1\% for stars between mags 8 and 15.
+
+\nwsec
+ {\tt sampleVelocity(model,Rzphi,N,\&Los,8,15)} with {\tt Rzphi} a {\tt
+PosCyl} will return (as\hfil\penalty-10000 {\tt std::vector<coord::VelCyl>})
+the velocities of {\tt N} mock stars at the {\tt coord::PosCyl Rzphi} that
+have apparent magnitudes between 8 and 15 given the extinction values
+provided by {\tt Los}. The contributions of individual
+components can be separated by calling this function multiple times with {\tt
+model} defined to include only one component's DF.  Since disc DFs vanish for
+$v_\phi<0$, there is an analogous function {\tt sampleHalfVelocity} that
+samples the interesting half of velocity space.
+
+\nwsec
+{\tt sampleVelocity\_LF(model,Rzphi,N,\&Los,8,15)} returns an apparent
+magnitude in addition to a velocity for each mock star (as {\tt
+std::pair<coord::VelCyl,double>}).
+
+\nwsec
+{\tt sampleLOS(model,\&Los,N,8,15)} returns {\tt N} phase-space
+locations ({\tt std::vector<coord::PosVelCyl>}) for stars between apparent
+mags 8 and 15.  The $s^2$ factor is included when {\tt Los} is a {\tt
+SunLos}. The
+last two parameters are optional; omitting them will remove restriction on
+apparent magnitudes.
+
+\nwsec
+{\tt sampleLOS\_LF(model,\&Los,N,8,15)} returns an apparent
+magnitude in addition to a phase-space location for each mock star (as {\tt
+std::pair<coord::PosVelCyl,double>}).
+
+\nwsec
+{\tt sampleLOSsVlos(model,\&Los,N,8,15)} returns just distances and $V_{\rm
+los}$ values for mock stars (as {\tt sd::vector<std::pair<double,double>
+>}). 
+
+
+
+\bye
+
+\nwsec
+{\tt sampleLOSsVlos\_LF(model,\&Los,N,8,15)} returns an apparent magnitude
+for each sampled star.
