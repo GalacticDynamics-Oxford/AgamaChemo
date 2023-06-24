@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{1f57a5b7-7179-4a17-bad1-ec052867d0d0}</ProjectGuid>
+    <RootNamespace>agama</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <WarningVersion>
+      </WarningVersion>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/_CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>true</OpenMPSupport>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="actions2d.cpp" />
+    <ClCompile Include="actions_focal_distance_finder.cpp" />
+    <ClCompile Include="actions_genfnc.cpp" />
+    <ClCompile Include="actions_isochrone.cpp" />
+    <ClCompile Include="actions_spherical.cpp" />
+    <ClCompile Include="actions_staeckel.cpp" />
+    <ClCompile Include="actions_torus.cpp" />
+    <ClCompile Include="coord.cpp" />
+    <ClCompile Include="cubature.cpp" />
+    <ClCompile Include="df_base.cpp" />
+    <ClCompile Include="df_disk.cpp" />
+    <ClCompile Include="df_factory.cpp" />
+    <ClCompile Include="df_halo_new.cpp" />
+    <ClCompile Include="df_interpolated.cpp" />
+    <ClCompile Include="df_spherical.cpp" />
+    <ClCompile Include="galaxymodel_base.cpp" />
+    <ClCompile Include="galaxymodel_densitygrid.cpp">
+      <RemoveUnreferencedCodeData Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</RemoveUnreferencedCodeData>
+      <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OpenMPSupport>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc11</LanguageStandard_C>
+    </ClCompile>
+    <ClCompile Include="galaxymodel_jeans.cpp" />
+    <ClCompile Include="galaxymodel_losvd.cpp" />
+    <ClCompile Include="galaxymodel_selfconsistent.cpp" />
+    <ClCompile Include="galaxymodel_spherical.cpp" />
+    <ClCompile Include="galaxymodel_velocitysampler.cpp" />
+    <ClCompile Include="math_core.cpp" />
+    <ClCompile Include="math_fit.cpp" />
+    <ClCompile Include="math_gausshermite.cpp" />
+    <ClCompile Include="math_geometry.cpp" />
+    <ClCompile Include="math_linalg.cpp" />
+    <ClCompile Include="math_ode.cpp" />
+    <ClCompile Include="math_optimization.cpp" />
+    <ClCompile Include="math_random.cpp" />
+    <ClCompile Include="math_sample.cpp" />
+    <ClCompile Include="math_specfunc.cpp" />
+    <ClCompile Include="math_sphharm.cpp" />
+    <ClCompile Include="math_spline.cpp" />
+    <ClCompile Include="obs_base.cpp" />
+    <ClCompile Include="obs_dust.cpp" />
+    <ClCompile Include="obs_los.cpp" />
+    <ClCompile Include="orbit.cpp" />
+    <ClCompile Include="orbit_lyapunov.cpp" />
+    <ClCompile Include="Oxford.cpp" />
+    <ClCompile Include="particles_io.cpp" />
+    <ClCompile Include="potential_analytic.cpp" />
+    <ClCompile Include="potential_base.cpp" />
+    <ClCompile Include="potential_composite.cpp" />
+    <ClCompile Include="potential_cylspline.cpp" />
+    <ClCompile Include="potential_dehnen.cpp" />
+    <ClCompile Include="potential_disk.cpp" />
+    <ClCompile Include="potential_factory.cpp" />
+    <ClCompile Include="potential_ferrers.cpp" />
+    <ClCompile Include="potential_galpot.cpp" />
+    <ClCompile Include="potential_king.cpp" />
+    <ClCompile Include="potential_multipole.cpp" />
+    <ClCompile Include="potential_perfect_ellipsoid.cpp" />
+    <ClCompile Include="potential_spheroid.cpp" />
+    <ClCompile Include="potential_utils.cpp" />
+    <ClCompile Include="torus\chb.cpp" />
+    <ClCompile Include="torus\fit.cpp" />
+    <ClCompile Include="torus\fit2.cpp" />
+    <ClCompile Include="torus\generatingfunction.cpp" />
+    <ClCompile Include="torus\orb.cpp" />
+    <ClCompile Include="torus\pjmcoords.cpp" />
+    <ClCompile Include="torus\pjmnum.cpp" />
+    <ClCompile Include="torus\point_closedorbitcheby.cpp" />
+    <ClCompile Include="torus\point_none.cpp" />
+    <ClCompile Include="torus\torus.cpp" />
+    <ClCompile Include="torus\toy_isochrone.cpp" />
+    <ClCompile Include="torus\wd_numerics.cpp" />
+    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="utils_config.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="actions2d.h" />
+    <ClInclude Include="actions_base.h" />
+    <ClInclude Include="actions_focal_distance_finder.h" />
+    <ClInclude Include="actions_genfnc.h" />
+    <ClInclude Include="actions_isochrone.h" />
+    <ClInclude Include="actions_spherical.h" />
+    <ClInclude Include="actions_staeckel.h" />
+    <ClInclude Include="actions_torus.h" />
+    <ClInclude Include="alloca.h" />
+    <ClInclude Include="coord.h" />
+    <ClInclude Include="cubature.h" />
+    <ClInclude Include="debug_utils.h" />
+    <ClInclude Include="df_base.h" />
+    <ClInclude Include="df_disk.h" />
+    <ClInclude Include="df_factory.h" />
+    <ClInclude Include="df_halo.h" />
+    <ClInclude Include="df_interpolated.h" />
+    <ClInclude Include="df_quasiisotropic.h" />
+    <ClInclude Include="df_spherical.h" />
+    <ClInclude Include="galaxymodel_base.h" />
+    <ClInclude Include="galaxymodel_densitygrid.h" />
+    <ClInclude Include="galaxymodel_jeans.h" />
+    <ClInclude Include="galaxymodel_losvd.h" />
+    <ClInclude Include="galaxymodel_selfconsistent.h" />
+    <ClInclude Include="galaxymodel_spherical.h" />
+    <ClInclude Include="galaxymodel_target.h" />
+    <ClInclude Include="galaxymodel_velocitysampler.h" />
+    <ClInclude Include="math_base.h" />
+    <ClInclude Include="math_core.h" />
+    <ClInclude Include="math_fit.h" />
+    <ClInclude Include="math_gausshermite.h" />
+    <ClInclude Include="math_geometry.h" />
+    <ClInclude Include="math_glquadrature.h" />
+    <ClInclude Include="math_linalg.h" />
+    <ClInclude Include="math_ode.h" />
+    <ClInclude Include="math_optimization.h" />
+    <ClInclude Include="math_random.h" />
+    <ClInclude Include="math_sample.h" />
+    <ClInclude Include="math_specfunc.h" />
+    <ClInclude Include="math_sphharm.h" />
+    <ClInclude Include="math_spline.h" />
+    <ClInclude Include="obs.h" />
+    <ClInclude Include="obs_base.h" />
+    <ClInclude Include="obs_dust.h" />
+    <ClInclude Include="obs_los.h" />
+    <ClInclude Include="orbit.h" />
+    <ClInclude Include="orbit_lyapunov.h" />
+    <ClInclude Include="Oxford.h" />
+    <ClInclude Include="particles_base.h" />
+    <ClInclude Include="potential_analytic.h" />
+    <ClInclude Include="potential_base.h" />
+    <ClInclude Include="potential_composite.h" />
+    <ClInclude Include="potential_cylspline.h" />
+    <ClInclude Include="potential_dehnen.h" />
+    <ClInclude Include="potential_disk.h" />
+    <ClInclude Include="potential_factory.h" />
+    <ClInclude Include="potential_ferrers.h" />
+    <ClInclude Include="potential_galpot.h" />
+    <ClInclude Include="potential_king.h" />
+    <ClInclude Include="potential_multipole.h" />
+    <ClInclude Include="potential_perfect_ellipsoid.h" />
+    <ClInclude Include="potential_spheroid.h" />
+    <ClInclude Include="potential_utils.h" />
+    <ClInclude Include="torus\constants.h" />
+    <ClInclude Include="torus\fit.h" />
+    <ClInclude Include="torus\generatingfunction.h" />
+    <ClInclude Include="torus\orb.h" />
+    <ClInclude Include="torus\pi.h" />
+    <ClInclude Include="torus\pjmcoords.h" />
+    <ClInclude Include="torus\point_closedorbitcheby.h" />
+    <ClInclude Include="torus\point_none.h" />
+    <ClInclude Include="torus\torus.h" />
+    <ClInclude Include="torus\toy_isochrone.h" />
+    <ClInclude Include="torus\units.h" />
+    <ClInclude Include="torus\wd_freememory.h" />
+    <ClInclude Include="torus\wd_matrix.h" />
+    <ClInclude Include="torus\wd_numerics.h" />
+    <ClInclude Include="units.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="utils_config.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
